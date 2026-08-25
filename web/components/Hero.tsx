@@ -109,15 +109,10 @@ export default function Hero() {
 
     const apply = () => {
       shiftRef.current = progress;
-      // Ink holds across the warm and pale-blue halves — it clears AA on both.
-      // It only crosses to almond once the ground starts going dark.
-      const t = Math.max(0, Math.min((progress - 0.62) / 0.26, 1));
-      const mix = (a: number, b: number) => Math.round(a + (b - a) * t);
-      sectionRef.current?.style.setProperty(
-        "--hero-fg",
-        `rgb(${mix(42, 251)},${mix(27, 246)},${mix(20, 239)})`,
-      );
-      setDark(progress > 0.72);
+      // Every stage of the journey keeps a light centre, so ink holds all the
+      // way through and never has to cross. Weakest pairing is 5.07:1 on the
+      // warm ground; the pink and blue stages are far clearer.
+      setDark(false);
     };
 
     const release = () => {

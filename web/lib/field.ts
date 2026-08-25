@@ -17,6 +17,7 @@
  */
 
 const ALMOND = [251, 246, 239] as const;
+const PLUM = [91, 46, 68] as const;
 const NAVY = [10, 22, 38] as const;
 
 export type Field = {
@@ -41,8 +42,8 @@ export function makeField(
     return [c, c.getContext("2d")!] as const;
   };
   const [warmC, warmX] = mk();
+  const [roseC, roseX] = mk();
   const [skyC, skyX] = mk();
-  const [navyC, navyX] = mk();
 
   const dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2);
   let w = 1;
@@ -94,7 +95,28 @@ export function makeField(
     warmX.fillRect(0, 0, w, h);
   }
 
-  /** Light blue — the midpoint of the journey. */
+  /** Light pink — the bridge out of the warm ground. */
+  function paintRose() {
+    prep(roseC, roseX);
+    const r = Math.max(w, h);
+
+    const g = roseX.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, "#E6B4BE"); // rose-300
+    g.addColorStop(0.48, "#F2D7DC"); // rose-200
+    g.addColorStop(1, "#E6B4BE");
+    roseX.fillStyle = g;
+    roseX.fillRect(0, 0, w, h);
+
+    lay(roseX, [
+      [0.16, 0.14, r * 0.62, "201,128,143", 0.6], // rose-500
+      [0.9, 0.24, r * 0.54, "156,110,134", 0.46], // mauve-600
+      [0.1, 0.9, r * 0.5, "217,113,77", 0.24], // clay, carried over from warm
+      [0.88, 0.92, r * 0.46, "201,128,143", 0.36],
+      [0.52, 0.54, r * 0.46, "255,255,255", 0.82], // lift behind the type
+    ]);
+  }
+
+  /** Light blue shaded with dark blue — where the journey ends. */
   function paintSky() {
     prep(skyC, skyX);
     const r = Math.max(w, h);
@@ -107,32 +129,11 @@ export function makeField(
     skyX.fillRect(0, 0, w, h);
 
     lay(skyX, [
-      [0.06, 0.1, r * 0.66, "91,132,180", 0.62], // sky-600
-      [0.95, 0.16, r * 0.56, "91,132,180", 0.44],
-      [0.12, 0.94, r * 0.5, "27,53,86", 0.22], // navy-700
-      [0.9, 0.9, r * 0.46, "91,132,180", 0.34],
-      [0.52, 0.52, r * 0.46, "255,255,255", 0.9], // lift behind the type
-    ]);
-  }
-
-  /** Dark blue — where the journey ends. */
-  function paintNavy() {
-    prep(navyC, navyX);
-    const r = Math.max(w, h);
-
-    const g = navyX.createLinearGradient(0, 0, w, h);
-    g.addColorStop(0, "#0A1626"); // navy-900
-    g.addColorStop(0.5, "#1B3556"); // navy-700
-    g.addColorStop(1, "#0A1626");
-    navyX.fillStyle = g;
-    navyX.fillRect(0, 0, w, h);
-
-    lay(navyX, [
-      [0.18, 0.16, r * 0.66, "45,84,133", 0.8],
-      [0.88, 0.6, r * 0.56, "45,84,133", 0.62],
-      [0.5, 0.5, r * 0.42, "91,132,180", 0.34], // lift behind the type
-      [0.06, 0.95, r * 0.44, "5,11,20", 0.75],
-      [0.96, 0.04, r * 0.42, "5,11,20", 0.65],
+      [0.1, 0.08, r * 0.6, "10,22,38", 0.5], // navy-900, deep corner
+      [0.94, 0.14, r * 0.52, "27,53,86", 0.46], // navy-700
+      [0.06, 0.95, r * 0.48, "27,53,86", 0.4],
+      [0.92, 0.9, r * 0.46, "91,132,180", 0.5], // sky-600
+      [0.5, 0.5, r * 0.5, "255,255,255", 0.92], // lift behind the type
     ]);
   }
 
@@ -144,27 +145,32 @@ export function makeField(
     cv.height = Math.round(h * dpr);
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     paintWarm();
+    paintRose();
     paintSky();
-    paintNavy();
   }
 
   const mix = (a: number, b: number, t: number) => Math.round(a + (b - a) * t);
 
   /**
-   * Almond hairlines over the warm ground, navy over the pale blue, back to
-   * almond over the dark blue — so they read against all three.
+   * Almond hairlines over the warm ground, plum over the pink, navy over the
+   * blue — so they stay readable at every stage.
    */
   function lineRGB(p1: number, p2: number) {
-    const r = mix(mix(ALMOND[0], NAVY[0], p1), ALMOND[0], p2);
-    const g = mix(mix(ALMOND[1], NAVY[1], p1), ALMOND[1], p2);
-    const b = mix(mix(ALMOND[2], NAVY[2], p1), ALMOND[2], p2);
+    const r = mix(mix(ALMOND[0], PLUM[0], p1), NAVY[0], p2);
+    const g = mix(mix(ALMOND[1], PLUM[1], p1), NAVY[1], p2);
+    const b = mix(mix(ALMOND[2], PLUM[2], p1), NAVY[2], p2);
     return `${r},${g},${b}`;
   }
 
+  const smooth = (x: number) => {
+    const t = Math.max(0, Math.min(x, 1));
+    return t * t * (3 - 2 * t);
+  };
+
   function paint(m: number, bloom: number, reveal = 1, shift = 0) {
-    // first half of the scroll warms into blue, second half takes it dark
-    const p1 = Math.max(0, Math.min(shift / 0.5, 1));
-    const p2 = Math.max(0, Math.min((shift - 0.5) / 0.5, 1));
+    // Warm -> pink -> blue. The windows overlap so no stage snaps in.
+    const p1 = smooth(shift / 0.45);
+    const p2 = smooth((shift - 0.4) / 0.6);
 
     ctx!.fillStyle = "#FBF6EF"; // almond
     ctx!.fillRect(0, 0, w, h);
@@ -174,11 +180,11 @@ export function makeField(
       ctx!.drawImage(warmC, 0, 0, w, h);
       if (p1 > 0) {
         ctx!.globalAlpha = bloom * p1;
-        ctx!.drawImage(skyC, 0, 0, w, h);
+        ctx!.drawImage(roseC, 0, 0, w, h);
       }
       if (p2 > 0) {
         ctx!.globalAlpha = bloom * p2;
-        ctx!.drawImage(navyC, 0, 0, w, h);
+        ctx!.drawImage(skyC, 0, 0, w, h);
       }
       ctx!.globalAlpha = 1;
     }
@@ -188,7 +194,7 @@ export function makeField(
     const cx = w / 2;
     const steps = 48;
     const rgb = lineRGB(p1, p2);
-    const mainA = (tone === "light" ? 0.2 : 0.3) - 0.06 * p1 + 0.06 * p2;
+    const mainA = (tone === "light" ? 0.2 : 0.3) + 0.02 * p1 + 0.02 * p2;
     const bandA = mainA * 1.5;
 
     // Lines fall from the top edge, each on its own offset so they arrive

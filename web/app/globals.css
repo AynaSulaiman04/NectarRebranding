@@ -23,9 +23,14 @@
   --error:#A8321A;
 
   /* ---- hero transition only ----
-     The blue the hero travels to on scroll. Not part of Section 05 —
-     an addition for the motion, pending client sign-off. Used nowhere
-     but the hero canvas. */
+     The route the hero travels on scroll: orange-red, through pink, into
+     light blue shaded with dark blue. Not part of Section 05 — an addition
+     for the motion, pending client sign-off. Used nowhere but the hero
+     canvas, and every stage holds ink type above AA. */
+  --rose-200:#F2D7DC;
+  --rose-300:#E6B4BE;
+  --rose-500:#C9808F;
+  --mauve-600:#9C6E86;
   --sky-100:#EAF1F8;
   --sky-300:#C3D6EC;
   --sky-600:#5B84B4;
