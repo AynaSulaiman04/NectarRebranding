@@ -5,9 +5,9 @@
  *          pulled toward the vertical centre, producing the pinched bowtie.
  *          The waist uses v*v so the curve stays smooth through the middle.
  *   bloom  0 = brick lines on almond. 1 = tinted lines over the ground.
- *   reveal 0 = no lines drawn, 1 = all of them. Lines fade in from the centre
- *          outward, so the form materialises rather than cutting in.
- *   shift  0 = the warm ground. 1 = the cool ground. Driven by scroll.
+ *   reveal 0 = no lines drawn, 1 = all of them. Lines grow downward from the
+ *          top edge on a staggered offset, so they fall into place.
+ *   shift  0 = the warm ground. 1 = the dark ground. Driven by scroll.
  *
  * Both grounds are painted once into offscreen canvases and composited, so an
  * animating frame only redraws strokes plus two drawImage calls.
@@ -115,23 +115,26 @@ export function makeField(
   }
 
   /**
-   * Cool ground — plum tinted over almond. Plum at full strength is very dark
-   * (white on plum is 10.9:1), so it is laid at partial alpha over the almond
-   * page colour. That gives the pale lavender, and keeps ink type legible.
+   * Dark ground. Section 05 has no blue, so this is built from plum over ink —
+   * the palette's only cool, dark direction. See the note in the handover.
    */
   function paintCool() {
     prep(cool, coolx);
     const r = Math.max(w, h);
 
-    coolx.fillStyle = "#FBF6EF"; // almond
+    const g = coolx.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, "#2A1B14"); // ink
+    g.addColorStop(0.5, "#5B2E44"); // plum
+    g.addColorStop(1, "#2A1B14"); // ink
+    coolx.fillStyle = g;
     coolx.fillRect(0, 0, w, h);
 
     lay(coolx, [
-      [0.04, 0.06, r * 0.72, "91,46,68", 0.72], // plum, top left
-      [0.96, 0.1, r * 0.58, "91,46,68", 0.5], // plum, top right
-      [0.1, 0.96, r * 0.5, "91,46,68", 0.34], // plum, bottom left
-      [0.92, 0.9, r * 0.44, "91,46,68", 0.26], // plum, bottom right
-      [0.55, 0.52, r * 0.46, "251,246,239", 0.92], // almond bloom through the centre
+      [0.2, 0.18, r * 0.66, "91,46,68", 0.85], // plum, upper left
+      [0.86, 0.62, r * 0.56, "91,46,68", 0.7], // plum, lower right
+      [0.5, 0.5, r * 0.42, "91,46,68", 0.5], // plum lift through the middle
+      [0.08, 0.94, r * 0.42, "42,27,20", 0.7], // ink, deep corner
+      [0.95, 0.04, r * 0.4, "42,27,20", 0.6], // ink, deep corner
     ]);
   }
 
@@ -148,11 +151,11 @@ export function makeField(
 
   const mix = (a: number, b: number, t: number) => Math.round(a + (b - a) * t);
 
-  /** brick -> almond as the ground blooms in, then -> plum as it cools. */
+  /** brick -> almond as the ground blooms in, staying almond over the dark. */
   function lineRGB(bloom: number, shift: number) {
-    const r = mix(mix(BRICK[0], ALMOND[0], bloom), PLUM[0], shift * 0.8);
-    const g = mix(mix(BRICK[1], ALMOND[1], bloom), PLUM[1], shift * 0.8);
-    const b = mix(mix(BRICK[2], ALMOND[2], bloom), PLUM[2], shift * 0.8);
+    const r = mix(mix(BRICK[0], ALMOND[0], bloom), ALMOND[0], shift);
+    const g = mix(mix(BRICK[1], ALMOND[1], bloom), ALMOND[1], shift);
+    const b = mix(mix(BRICK[2], ALMOND[2], bloom), ALMOND[2], shift);
     return `${r},${g},${b}`;
   }
 
@@ -179,22 +182,28 @@ export function makeField(
     const mainA = strength + 0.06 * bloom + 0.1 * shift;
     const bandA = 0.05 + 0.1 * bloom;
 
-    // Soft leading edge, so lines arrive gradually rather than switching on.
-    const EDGE = 0.22;
-    const front = reveal * (1 + EDGE);
+    // Lines fall from the top edge, each on its own offset so they arrive
+    // unevenly rather than as one descending block.
+    const SPREAD = 0.45;
 
     ctx!.lineWidth = 1;
     for (let i = 0; i < n; i++) {
       const u = (i / (n - 1)) * 2 - 1;
 
-      // 0 at the centre, 1 at the edges — the order lines fade in.
-      const fade =
-        reveal >= 1 ? 1 : Math.max(0, Math.min(1, (front - Math.abs(u)) / EDGE));
-      if (fade <= 0) continue;
+      let grow = 1;
+      if (reveal < 1) {
+        // deterministic per-line offset in [0, SPREAD)
+        const off = (((i * 2654435761) >>> 0) % 1000) / 1000 * SPREAD;
+        grow = Math.max(0, Math.min(1, reveal * (1 + SPREAD) - off));
+        if (grow <= 0) continue;
+      }
+
+      const fade = 1;
+      const vEnd = -1 + 2 * grow;
 
       ctx!.beginPath();
       for (let s = 0; s <= steps; s++) {
-        const v = (s / steps) * 2 - 1;
+        const v = -1 + (vEnd + 1) * (s / steps);
         const k = m + (1 - m) * (v * v); // smooth waist, no kink at v = 0
         const x = cx + u * half * k;
         const y = (v * 0.5 + 0.5) * h;

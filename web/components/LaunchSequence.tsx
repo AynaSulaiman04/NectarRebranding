@@ -4,20 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { makeField, prefersReducedMotion } from "@/lib/field";
 import { LAUNCH_DONE_EVENT } from "@/lib/useTypewriter";
 
-const M0 = 0.015; // fully pinched
-const FADE = 900; // lines fade in from the centre outward
-const HOLD = 1150; // the pinched form sits before it moves
-const RELAX = 2000; // pinch relaxes into straight lines
-const BLOOM_IN = 650; // warm ground starts washing in under the lines
-const BLOOM = 1700;
-const LIFT = 3300;
-const DONE = 3750;
+const LOGO_IN = 60; // mark appears on the almond ground
+const DROP_AT = 700; // lines start falling from the top edge
+const DROP = 1400;
+const BLOOM_AT = 1500; // warm ground washes in underneath
+const BLOOM = 1400;
+const MARK_OUT = 2050;
+const LIFT = 2900;
+const DONE = 3300;
 
 /**
- * Opens on almond with brick lines fully pinched, holds, then relaxes into the
- * straight hairline field as the warm ground blooms in underneath. Runs on
- * every page load; it lives in the root layout, so client-side navigation
- * between pages does not remount and replay it.
+ * Opens on almond with the mark alone. Lines then fall from the top edge on
+ * staggered offsets, the warm ground washes in underneath them, and the whole
+ * layer lifts to reveal the hero.
+ *
+ * Runs on every page load; it lives in the root layout, so client-side
+ * navigation between pages does not remount and replay it.
  */
 export default function LaunchSequence() {
   const [mounted, setMounted] = useState(false);
@@ -28,7 +30,6 @@ export default function LaunchSequence() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   // Decide on the client only, so the server never renders the overlay.
-  // Runs on every page load; client-side navigation does not remount it.
   useEffect(() => {
     if (prefersReducedMotion()) {
       window.dispatchEvent(new Event(LAUNCH_DONE_EVENT));
@@ -46,7 +47,7 @@ export default function LaunchSequence() {
     document.body.style.overflow = "hidden";
     const field = makeField(cv);
     field.size();
-    field.paint(M0, 0, 0); // nothing drawn yet — the lines fade in
+    field.paint(1, 0, 0); // almond ground, nothing drawn yet
 
     const raf0 = requestAnimationFrame(() => setOn(true));
 
@@ -56,28 +57,21 @@ export default function LaunchSequence() {
       if (t0 === null) t0 = t;
       const el = t - t0;
 
-      // 1. lines fade in from the centre outward, still fully pinched
-      const f = Math.min(el / FADE, 1);
-      const reveal = 1 - Math.pow(1 - f, 3); // ease-out cubic
+      // lines fall from the top edge
+      const d = Math.max(0, Math.min((el - DROP_AT) / DROP, 1));
+      const reveal = 1 - Math.pow(1 - d, 3); // ease-out cubic
 
-      // 2. after the hold, the pinch relaxes into straight lines
-      let m = M0;
-      if (el > HOLD) {
-        const p = Math.min((el - HOLD) / RELAX, 1);
-        m = M0 + (1 - M0) * (1 - Math.pow(1 - p, 5)); // ease-out quint
-      }
+      // warm ground washes in underneath them
+      const b = Math.max(0, Math.min((el - BLOOM_AT) / BLOOM, 1));
 
-      // 3. the warm ground washes in underneath, overlapping both
-      const b = Math.max(0, Math.min((el - BLOOM_IN) / BLOOM, 1));
-
-      field.paint(m, b * b * (3 - 2 * b), reveal); // smoothstep bloom
-      if (el < HOLD + RELAX) raf = requestAnimationFrame(step);
+      field.paint(1, b * b * (3 - 2 * b), reveal); // straight lines throughout
+      if (el < BLOOM_AT + BLOOM) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
 
     const timers = [
-      setTimeout(() => setMark(true), HOLD),
-      setTimeout(() => setMark(false), 2950),
+      setTimeout(() => setMark(true), LOGO_IN),
+      setTimeout(() => setMark(false), MARK_OUT),
       setTimeout(() => setUp(true), LIFT),
       setTimeout(() => {
         document.body.style.overflow = "";
@@ -97,16 +91,10 @@ export default function LaunchSequence() {
   if (gone) return null;
 
   return (
-    <div
-      className="launch"
-      aria-hidden="true"
-      data-on={on}
-      data-mark={mark}
-      data-up={up}
-    >
+    <div className="launch" aria-hidden="true" data-on={on} data-mark={mark} data-up={up}>
       <canvas ref={ref} />
       <div className="launch__mark">
-        <svg width="32" height="32" viewBox="0 0 34 34" fill="none">
+        <svg width="44" height="44" viewBox="0 0 34 34" fill="none">
           <path
             d="M17 6.4l9.2 5.3v10.6L17 27.6l-9.2-5.3V11.7L17 6.4z"
             stroke="currentColor"
@@ -114,7 +102,6 @@ export default function LaunchSequence() {
             strokeLinejoin="round"
           />
         </svg>
-        <span>Nectar Consultancy</span>
       </div>
     </div>
   );

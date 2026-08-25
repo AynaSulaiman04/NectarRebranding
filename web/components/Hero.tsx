@@ -21,14 +21,20 @@ const FULL = HEADLINE.map((s) => s.text).join("");
 const CAPTION =
   "From lodgements and governance to tendering, systems and restructuring, we help Australian organisations move forward with clarity and structure.";
 
+/** Wheel travel, in px, needed to take the ground fully dark. */
+const LOCK = 900;
+
 export default function Hero() {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const shiftRef = useRef(0);
   const ready = useLaunchGate();
   const { n } = useTypewriter(FULL, ready, 30, 420);
   const done = n >= FULL.length;
 
+  /* ---------- the field ---------- */
   useEffect(() => {
-    const cv = ref.current;
+    const cv = canvasRef.current;
     if (!cv) return;
 
     const field = makeField(cv, 6, "light");
@@ -36,31 +42,14 @@ export default function Hero() {
     let raf = 0;
     let running = false;
 
-    // Warm ground cools toward plum as the hero scrolls away. Completed over
-    // roughly half a viewport, so the change is fully visible before the hero
-    // leaves the screen.
-    let shift = 0;
-    const readScroll = () => {
-      const span = window.innerHeight * 0.55;
-      shift = Math.max(0, Math.min(window.scrollY / span, 1));
-    };
-    readScroll();
-
     field.size();
-    field.paint(1, 1, 1, shift);
+    field.paint(1, 1, 1, shiftRef.current);
 
     const tick = (t: number) => {
       if (!running) return;
-      field.paint(0.99 + 0.01 * Math.cos(t / 11000), 1, 1, shift);
+      field.paint(0.99 + 0.01 * Math.cos(t / 11000), 1, 1, shiftRef.current);
       raf = requestAnimationFrame(tick);
     };
-
-    const onScroll = () => {
-      readScroll();
-      // Repaint directly when the breathing loop is not running.
-      if (!running) field.paint(1, 1, 1, shift);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
 
     const io = reduced
       ? null
@@ -85,8 +74,7 @@ export default function Hero() {
       clearTimeout(timer);
       timer = setTimeout(() => {
         field.size();
-        readScroll();
-        field.paint(1, 1, 1, shift);
+        field.paint(1, 1, 1, shiftRef.current);
       }, 150);
     };
     window.addEventListener("resize", onResize);
@@ -95,18 +83,109 @@ export default function Hero() {
       running = false;
       cancelAnimationFrame(raf);
       io?.disconnect();
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       clearTimeout(timer);
     };
   }, []);
 
+  /* ---------- hold the page while the ground goes dark ---------- */
+  useEffect(() => {
+    if (!ready) return;
+
+    const setDark = (on: boolean) => {
+      if (sectionRef.current) sectionRef.current.dataset.dark = String(on);
+      document.documentElement.dataset.heroDark = String(on);
+    };
+
+    if (prefersReducedMotion()) {
+      shiftRef.current = 1;
+      setDark(true);
+      return;
+    }
+
+    let progress = 0;
+    let unlocked = false;
+    document.body.style.overflow = "hidden";
+
+    const apply = () => {
+      shiftRef.current = progress;
+      // Type crosses from ink to almond across the middle of the change.
+      const t = Math.max(0, Math.min((progress - 0.3) / 0.45, 1));
+      const mix = (a: number, b: number) => Math.round(a + (b - a) * t);
+      sectionRef.current?.style.setProperty(
+        "--hero-fg",
+        `rgb(${mix(42, 251)},${mix(27, 246)},${mix(20, 239)})`,
+      );
+      setDark(progress > 0.5);
+    };
+
+    const release = () => {
+      unlocked = true;
+      progress = 1;
+      apply();
+      document.body.style.overflow = "";
+      teardown();
+    };
+
+    const advance = (dy: number) => {
+      if (unlocked) return;
+      progress = Math.max(0, Math.min(progress + dy / LOCK, 1));
+      apply();
+      if (progress >= 1) release();
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (unlocked) return;
+      e.preventDefault();
+      advance(e.deltaY);
+    };
+
+    let touchY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      touchY = e.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (unlocked) return;
+      e.preventDefault();
+      const y = e.touches[0]?.clientY ?? touchY;
+      advance((touchY - y) * 2.2);
+      touchY = y;
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (unlocked) return;
+      // Escape is the way out for anyone who does not want to sit through it.
+      if (e.key === "Escape" || e.key === "Tab") return release();
+      if (["ArrowDown", "PageDown", " ", "ArrowUp", "PageUp"].includes(e.key)) {
+        e.preventDefault();
+        advance(e.key === "ArrowUp" || e.key === "PageUp" ? -160 : 160);
+      }
+    };
+
+    function teardown() {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKey);
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      teardown();
+      document.body.style.overflow = "";
+    };
+  }, [ready]);
+
   // Walk the segments, handing each the slice of the typed range it owns.
   let cursor = 0;
 
   return (
-    <section className="hero">
-      <canvas ref={ref} aria-hidden="true" />
+    <section className="hero" ref={sectionRef} data-dark="false">
+      <canvas ref={canvasRef} aria-hidden="true" />
 
       <div className="hero__inner">
         <h1 className="hero__title display" aria-label={FULL.replace("\n", " ")}>
