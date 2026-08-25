@@ -1,0 +1,118 @@
+/**
+ * Warped hairline field.
+ *
+ *   m      1 = straight, evenly spaced lines. As m falls toward 0 every line is
+ *          pulled toward the vertical centre, producing the pinched bowtie.
+ *          The waist uses v*v so the curve stays smooth through the middle
+ *          rather than kinking.
+ *   bloom  0 = brick lines on almond. 1 = almond lines over the warm field.
+ *
+ * The warm field is painted once into an offscreen canvas and composited, so an
+ * animating frame only ever redraws strokes.
+ *
+ * Every colour here is a Section 05 token. Do not introduce another.
+ */
+
+const BRICK = [179, 58, 30] as const;
+const ALMOND = [251, 246, 239] as const;
+
+export type Field = {
+  size: () => void;
+  paint: (m: number, bloom: number) => void;
+};
+
+export function makeField(cv: HTMLCanvasElement, pitch = 6): Field {
+  const ctx = cv.getContext("2d");
+  if (!ctx) throw new Error("2d context unavailable");
+
+  const bg = document.createElement("canvas");
+  const bgx = bg.getContext("2d")!;
+  const dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2);
+
+  let w = 1;
+  let h = 1;
+
+  function paintBase() {
+    bg.width = Math.round(w * dpr);
+    bg.height = Math.round(h * dpr);
+    bgx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const r = Math.max(w, h);
+    const g = bgx.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, "#A8321A"); // error
+    g.addColorStop(0.52, "#D9714D"); // clay
+    g.addColorStop(1, "#B33A1E"); // brick
+    bgx.fillStyle = g;
+    bgx.fillRect(0, 0, w, h);
+
+    const blooms: [number, number, number, string, number][] = [
+      [0.2, 0.8, r * 0.78, "232,163,61", 0.78], // amber
+      [0.86, 0.3, r * 0.62, "179,58,30", 0.9], // brick
+      [0.55, 0.04, r * 0.5, "168,50,26", 0.55], // error
+    ];
+    for (const [x, y, rad, rgb, a] of blooms) {
+      const grad = bgx.createRadialGradient(w * x, h * y, 0, w * x, h * y, rad);
+      grad.addColorStop(0, `rgba(${rgb},${a})`);
+      grad.addColorStop(1, `rgba(${rgb},0)`);
+      bgx.fillStyle = grad;
+      bgx.fillRect(0, 0, w, h);
+    }
+  }
+
+  function size() {
+    const rect = cv.getBoundingClientRect();
+    w = Math.max(1, Math.round(rect.width));
+    h = Math.max(1, Math.round(rect.height));
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paintBase();
+  }
+
+  /** brick -> almond as the field blooms in */
+  function lineRGB(bloom: number) {
+    const mix = (a: number, b: number) => Math.round(a + (b - a) * bloom);
+    return `${mix(BRICK[0], ALMOND[0])},${mix(BRICK[1], ALMOND[1])},${mix(BRICK[2], ALMOND[2])}`;
+  }
+
+  function paint(m: number, bloom: number) {
+    ctx!.fillStyle = "#FBF6EF"; // almond
+    ctx!.fillRect(0, 0, w, h);
+
+    if (bloom > 0) {
+      ctx!.globalAlpha = bloom;
+      ctx!.drawImage(bg, 0, 0, w, h);
+      ctx!.globalAlpha = 1;
+    }
+
+    const n = Math.max(150, Math.round(w / pitch));
+    const half = w / 2 + 70;
+    const cx = w / 2;
+    const steps = 48;
+    const rgb = lineRGB(bloom);
+    const main = `rgba(${rgb},${(0.3 + 0.06 * bloom).toFixed(3)})`;
+    const band = `rgba(91,46,68,${(0.05 + 0.13 * bloom).toFixed(3)})`; // plum
+
+    ctx!.lineWidth = 1;
+    for (let i = 0; i < n; i++) {
+      const u = (i / (n - 1)) * 2 - 1;
+      ctx!.beginPath();
+      for (let s = 0; s <= steps; s++) {
+        const v = (s / steps) * 2 - 1;
+        const k = m + (1 - m) * (v * v); // smooth waist, no kink at v = 0
+        const x = cx + u * half * k;
+        const y = (v * 0.5 + 0.5) * h;
+        if (s) ctx!.lineTo(x, y);
+        else ctx!.moveTo(x, y);
+      }
+      ctx!.strokeStyle = i % 7 === 0 ? band : main;
+      ctx!.stroke();
+    }
+  }
+
+  return { size, paint };
+}
+
+export const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
