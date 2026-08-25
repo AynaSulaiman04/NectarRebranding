@@ -33,9 +33,10 @@ export default function Nav() {
             style={{ transitionDelay: "60ms" }}
             aria-label="Nectar Consultancy, home"
           >
-            {/* mark + NECTAR only: the CONSULTANCY line is unreadable at
-                nav scale, so the full lockup is kept for the footer */}
-            <BrandLockup size={19} suffix={false} />
+            {/* wordmark only — the mark is out of the nav until the real
+                artwork lands. CONSULTANCY is also dropped here: it is
+                unreadable at 34px, so the full lockup stays in the footer. */}
+            <BrandLockup size={19} suffix={false} mark={false} />
           </Link>
 
           <nav

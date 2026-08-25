@@ -13,8 +13,8 @@ function range(p: number, a: number, b: number) {
  * The black beat the hero resolves into.
  *
  * Pinned while it plays: the middle line of the statement splits apart and an
- * image slots into the gap, a second paragraph follows, the partner card
- * arrives, and the drawn line extends around the type.
+ * image slots into the gap, a second paragraph follows, and the partner card
+ * arrives.
  */
 export default function DarkStatement() {
   const ref = useRef<HTMLElement>(null);
@@ -26,7 +26,7 @@ export default function DarkStatement() {
     const set = (k: string, v: number) => el.style.setProperty(k, String(v));
 
     if (prefersReducedMotion()) {
-      ["--split", "--p2", "--card", "--draw"].forEach((k) => set(k, 1));
+      ["--split", "--p2", "--card"].forEach((k) => set(k, 1));
       return;
     }
 
@@ -37,8 +37,6 @@ export default function DarkStatement() {
       const total = Math.max(1, rect.height - window.innerHeight);
       const p = Math.max(0, Math.min(-rect.top / total, 1));
 
-      // one continuous draw across the whole beat, rather than two bursts
-      set("--draw", range(p, 0.02, 0.92));
       set("--split", range(p, 0.12, 0.42));
       set("--p2", range(p, 0.34, 0.58));
       set("--card", range(p, 0.5, 0.72));
@@ -61,36 +59,6 @@ export default function DarkStatement() {
   return (
     <section className="dark" ref={ref}>
       <div className="dark__sticky">
-        <svg
-          className="dark__line"
-          viewBox="0 0 1100 634"
-          fill="none"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          {/* The line begins as a ring at its head, then runs on as ONE
-              continuous stroke — head, sweep, hook and loop in a single path,
-              so it draws like a pencil rather than as separate fragments. */}
-          <circle
-            className="dark__dot"
-            cx="181"
-            cy="182"
-            r="7"
-            pathLength={100}
-            stroke="var(--azure-500)"
-            strokeWidth="1.5"
-          />
-          <path
-            className="dark__stroke"
-            pathLength={100}
-            d="M181 182C120 296 230 396 330 486c42 40 58 76 70 80c40 12 105-34 160-58c56-24 118-30 150 2c28 28 6 74-46 84c-64 12-150-22-214-74"
-            stroke="var(--azure-500)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-
         <div className="dark__inner">
           <h2 className="dark__title display">
             <span className="dark__ln">A Clear Path</span>

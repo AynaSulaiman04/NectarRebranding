@@ -34,7 +34,6 @@
   --sky-100:#EAF1F8;
   --sky-300:#C3D6EC;
   --sky-600:#5B84B4;
-  --azure-500:#1F6FA8;   /* the drawn line on the dark beat */
   --black:#0B0B0C;       /* the dark beat's ground — ink reads brown at scale */
   --navy-700:#1B3556;
   --navy-900:#0A1626;
@@ -400,31 +399,12 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   color:var(--almond);
   height:230svh;
   isolation:isolate;
-  --split:0; --p2:0; --card:0; --draw:0;
+  --split:0; --p2:0; --card:0;
 }
 .dark__sticky{
   position:sticky;top:0;height:100svh;overflow:hidden;
   display:grid;
 }
-.dark__line{position:absolute;inset:0;width:100%;height:100%;z-index:0}
-/* pathLength=100 on each path, so the draw-in is proportional to the path
-   rather than to a guessed dash length. */
-.dark__stroke{
-  stroke-dasharray:100;
-  stroke-dashoffset:calc(100 - var(--draw) * 100);
-}
-/* The ring closes over the first quarter of --draw, then the line runs on
-   from it — so the mark reads as a head that sets off, not two strokes. */
-.dark__dot{
-  fill:none;
-  stroke-dasharray:100;
-  stroke-dashoffset:calc(100 - clamp(0,calc(var(--draw) * 4),1) * 100);
-}
-/* The stroke runs on once the ring has closed, so the two read as one line. */
-.dark__stroke{
-  stroke-dashoffset:calc(100 - clamp(0,calc((var(--draw) - .18) / .82),1) * 100);
-}
-
 .dark__inner{
   position:relative;z-index:1;
   width:100%;max-width:var(--maxw);margin-inline:auto;

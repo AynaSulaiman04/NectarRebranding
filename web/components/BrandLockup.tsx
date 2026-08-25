@@ -60,14 +60,17 @@ export default function BrandLockup({
   size = 26,
   tone = "gradient",
   suffix = true,
+  mark = true,
 }: {
   size?: number;
   tone?: Tone;
   suffix?: boolean;
+  /** set false for wordmark only */
+  mark?: boolean;
 }) {
   return (
     <span className="lockup" data-tone={tone}>
-      <Mark size={size} tone={tone} />
+      {mark && <Mark size={size} tone={tone} />}
       <span className="lockup__type">
         <span className="lockup__name">Nectar</span>
         {suffix && <span className="lockup__suffix">Consultancy</span>}
