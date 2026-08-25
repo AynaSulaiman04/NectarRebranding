@@ -21,7 +21,18 @@ export type Field = {
   paint: (m: number, bloom: number) => void;
 };
 
-export function makeField(cv: HTMLCanvasElement, pitch = 6): Field {
+/**
+ * "deep" is the launch ground — brick and error dominant.
+ * "light" is the hero ground — clay and amber dominant, with a bloom through
+ * the middle so ink-coloured display type clears WCAG AA over it.
+ */
+export type Tone = "deep" | "light";
+
+export function makeField(
+  cv: HTMLCanvasElement,
+  pitch = 6,
+  tone: Tone = "deep",
+): Field {
   const ctx = cv.getContext("2d");
   if (!ctx) throw new Error("2d context unavailable");
 
@@ -39,17 +50,30 @@ export function makeField(cv: HTMLCanvasElement, pitch = 6): Field {
 
     const r = Math.max(w, h);
     const g = bgx.createLinearGradient(0, 0, w, h);
-    g.addColorStop(0, "#A8321A"); // error
-    g.addColorStop(0.52, "#D9714D"); // clay
-    g.addColorStop(1, "#B33A1E"); // brick
+    if (tone === "light") {
+      g.addColorStop(0, "#B33A1E"); // brick
+      g.addColorStop(0.5, "#D9714D"); // clay
+      g.addColorStop(1, "#A8321A"); // error
+    } else {
+      g.addColorStop(0, "#A8321A"); // error
+      g.addColorStop(0.52, "#D9714D"); // clay
+      g.addColorStop(1, "#B33A1E"); // brick
+    }
     bgx.fillStyle = g;
     bgx.fillRect(0, 0, w, h);
 
-    const blooms: [number, number, number, string, number][] = [
-      [0.2, 0.8, r * 0.78, "232,163,61", 0.78], // amber
-      [0.86, 0.3, r * 0.62, "179,58,30", 0.9], // brick
-      [0.55, 0.04, r * 0.5, "168,50,26", 0.55], // error
-    ];
+    const blooms: [number, number, number, string, number][] =
+      tone === "light"
+        ? [
+            [0.18, 0.78, r * 0.8, "232,163,61", 0.82], // amber, lower left
+            [0.84, 0.28, r * 0.66, "217,113,77", 0.9], // clay, upper right
+            [0.5, 0.46, r * 0.62, "232,163,61", 0.55], // amber through the middle
+          ]
+        : [
+            [0.2, 0.8, r * 0.78, "232,163,61", 0.78], // amber
+            [0.86, 0.3, r * 0.62, "179,58,30", 0.9], // brick
+            [0.55, 0.04, r * 0.5, "168,50,26", 0.55], // error
+          ];
     for (const [x, y, rad, rgb, a] of blooms) {
       const grad = bgx.createRadialGradient(w * x, h * y, 0, w * x, h * y, rad);
       grad.addColorStop(0, `rgba(${rgb},${a})`);
@@ -90,8 +114,9 @@ export function makeField(cv: HTMLCanvasElement, pitch = 6): Field {
     const cx = w / 2;
     const steps = 48;
     const rgb = lineRGB(bloom);
-    const main = `rgba(${rgb},${(0.3 + 0.06 * bloom).toFixed(3)})`;
-    const band = `rgba(91,46,68,${(0.05 + 0.13 * bloom).toFixed(3)})`; // plum
+    const strength = tone === "light" ? 0.2 : 0.3;
+    const main = `rgba(${rgb},${(strength + 0.06 * bloom).toFixed(3)})`;
+    const band = `rgba(91,46,68,${(0.05 + 0.1 * bloom).toFixed(3)})`; // plum
 
     ctx!.lineWidth = 1;
     for (let i = 0; i < n; i++) {

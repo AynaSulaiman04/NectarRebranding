@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { makeField, prefersReducedMotion } from "@/lib/field";
+import { LAUNCH_DONE_EVENT } from "@/lib/useTypewriter";
 
 const M0 = 0.015; // fully pinched
 const HOLD = 560; // hold the bowtie so it registers
@@ -37,6 +38,7 @@ export default function LaunchSequence() {
     if (seen || prefersReducedMotion()) return;
     try {
       sessionStorage.setItem(SEEN_KEY, "1");
+      sessionStorage.setItem("nectar.launch.running", "1");
     } catch {
       /* private mode — run it anyway */
     }
@@ -79,6 +81,12 @@ export default function LaunchSequence() {
       setTimeout(() => {
         document.body.style.overflow = "";
         setGone(true);
+        try {
+          sessionStorage.removeItem("nectar.launch.running");
+        } catch {
+          /* ignore */
+        }
+        window.dispatchEvent(new Event(LAUNCH_DONE_EVENT));
       }, DONE),
     ];
 

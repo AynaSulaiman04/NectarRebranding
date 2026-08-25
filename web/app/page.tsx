@@ -1,5 +1,5 @@
 import Link from "next/link";
-import HairlineBand from "@/components/HairlineBand";
+import Hero from "@/components/Hero";
 import Reveal from "@/components/Reveal";
 import CtaBand from "@/components/CtaBand";
 import { Arrow } from "@/components/Arrow";
@@ -9,36 +9,8 @@ import { sectors, stats, cases } from "@/content/site";
 export default function Home() {
   return (
     <>
-      {/* ---------- hero ---------- */}
-      <section className="section wrap">
-        <div className="sectionHead" style={{ paddingBottom: 0 }}>
-          <div>
-            <span className="eyebrow">Nectar Consultancy</span>
-            <h1 className="display" style={{ marginTop: 18 }}>
-              Business consulting for Australian organisations.
-            </h1>
-          </div>
-          <div>
-            <hr className="rule--brick" style={{ marginBottom: 22 }} />
-            <p className="lede">
-              We work on business solutions, process optimisation and regulatory
-              compliance. If it improves efficiency for the business, it is in
-              scope.
-            </p>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 28 }}>
-              <Link className="btn" href="/contact">
-                Talk to us <Arrow />
-              </Link>
-              <Link className="btn btn--ghost" href="/evidence">
-                See our work
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* the hairline field, as an accent rather than the whole page */}
-      <HairlineBand />
+      {/* the field is now the hero itself — revealed as the launch curtain lifts */}
+      <Hero />
 
       {/* ---------- proof strip ---------- */}
       <section className="section--tight wrap">
