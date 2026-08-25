@@ -224,9 +224,10 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 
 .hero__title{
   /* opsz at its maximum gives the Didone its highest stroke contrast, which is
-     what reads as a display serif at this size. */
+     what reads as a display serif at this size.
+     WEIGHT IS DELIBERATE — the hero is set bold and should stay bold. */
   font-variation-settings:'opsz' 96;
-  font-weight:400;
+  font-weight:700;
   /* The Didone sets wider than the previous face — sized so the two lines
      hold without wrapping to three. */
   font-size:clamp(32px,6.4vw,80px);
