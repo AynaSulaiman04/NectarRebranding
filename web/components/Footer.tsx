@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { practices } from "@/content/practices";
 import { site } from "@/content/site";
+import BrandLockup from "./BrandLockup";
 
 export default function Footer() {
   return (
@@ -8,10 +9,7 @@ export default function Footer() {
       <div className="wrap">
         <div className="footer__grid">
           <div>
-            <span className="brand">
-              <span className="brand__name">Nectar</span>
-              <span className="brand__suffix">Consultancy</span>
-            </span>
+            <BrandLockup size={24} />
             <p className="small" style={{ maxWidth: "34ch", marginTop: 16 }}>
               A trading name of {site.entity}. Business solutions, process
               optimisation and regulatory compliance for Australian

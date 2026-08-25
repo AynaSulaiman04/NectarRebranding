@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Figtree } from "next/font/google";
+import { Instrument_Serif, Figtree } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import LaunchSequence from "@/components/LaunchSequence";
@@ -7,20 +7,17 @@ import { site } from "@/content/site";
 import "./globals.css";
 
 /**
- * Display face, matched to the reference Ayna supplied: high stroke contrast,
- * narrow-ish proportions, a calligraphic italic for the accent words.
+ * Display face — Instrument Serif, specified by the client.
  *
- * One family carries both settings — bold on the hero, regular on the dark
- * statement beat — so the site stays on two families total.
+ * Ships a single weight (400) plus italic; there is no bold and no variable
+ * axis. Its presence at display sizes comes from the face itself, not weight.
  *
  * NOTE: this supersedes brief R11, which specified Fraunces with WONK at 0.
  * Changed on instruction; the brief has not been reissued.
- *
- * Variable font, so weight is omitted (see next/font docs). No opsz axis on
- * this family — contrast comes from the design, not an axis.
  */
-const display = Playfair_Display({
+const display = Instrument_Serif({
   subsets: ["latin"],
+  weight: "400",
   style: ["normal", "italic"],
   display: "swap",
   variable: "--font-display",

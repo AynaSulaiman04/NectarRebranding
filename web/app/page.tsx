@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
+import ScopeBridge from "@/components/ScopeBridge";
 import DarkStatement from "@/components/DarkStatement";
 import Reveal from "@/components/Reveal";
 import CtaBand from "@/components/CtaBand";
@@ -15,6 +16,9 @@ export default function Home() {
 
       {/* the black beat the hero's ground resolves into */}
       <DarkStatement />
+
+      {/* carries the ground out of black and lands the scope test */}
+      <ScopeBridge />
 
       {/* ---------- proof strip ---------- */}
       <section className="section--tight wrap">

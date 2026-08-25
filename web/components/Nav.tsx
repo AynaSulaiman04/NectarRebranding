@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLaunchGate } from "@/lib/useTypewriter";
 import { Arrow } from "./Arrow";
+import BrandLockup from "./BrandLockup";
 
 const links = [
   { href: "/what-we-do", label: "Practices" },
@@ -32,15 +33,9 @@ export default function Nav() {
             style={{ transitionDelay: "60ms" }}
             aria-label="Nectar Consultancy, home"
           >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M12 3.6l7.3 4.2v8.4L12 20.4l-7.3-4.2V7.8L12 3.6z"
-                stroke="var(--brick)"
-                strokeWidth="1.6"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="brand__name">Nectar</span>
+            {/* mark + NECTAR only: the CONSULTANCY line is unreadable at
+                nav scale, so the full lockup is kept for the footer */}
+            <BrandLockup size={19} suffix={false} />
           </Link>
 
           <nav
