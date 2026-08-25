@@ -4,26 +4,40 @@
    Nothing outside this block may introduce a new colour.
    ============================================================ */
 :root{
-  /* surface and text */
-  --almond:#FBF6EF;
-  --white:#FFFFFF;
-  --ink:#2A1B14;
-  --line:#E6DCCF;
-  --sunk:#F5EEE4;
+  /* ---- blue scheme ----
+     Replaces the brief's Section 05 tokens at the client's direction.
+     Section 05 is recorded in the brief and in git history if it is
+     reinstated. Names are kept so nothing downstream has to change. */
 
-  /* brand and accents */
-  --brick:#B33A1E;
-  --moss:#3F5B45;
-  --amber:#E8A33D;
-  --amber-ink:#8A5C10;
-  --plum:#5B2E44;
-  --clay:#D9714D;
+  /* the blue ramp */
+  --sky-100:#EAF1F8;
+  --sky-200:#D3E1F0;
+  --sky-300:#C3D6EC;
+  --sky-600:#5B84B4;
+  --navy-600:#2D5485;
+  --navy-700:#1B3556;
+  --navy-900:#0A1626;
+
+  /* surface and text */
+  --almond:var(--sky-100);   /* page */
+  --white:#FFFFFF;
+  --ink:var(--navy-900);     /* all body text — 15.9:1 on sky-100 */
+  --line:var(--sky-200);
+  --sunk:#F2F7FC;
+
+  /* accents */
+  --brick:var(--navy-600);   /* primary: buttons, links, mark */
+  --moss:#2F5D5B;            /* success */
+  --amber:#E8A33D;           /* warning */
+  --amber-ink:#7A5210;
+  --plum:var(--navy-700);
+  --clay:var(--sky-600);
   --error:#A8321A;
 
   /* derived — opacity only, no new hues */
-  --ink-70:rgba(42,27,20,.70);
-  --ink-55:rgba(42,27,20,.55);
-  --ink-38:rgba(42,27,20,.38);
+  --ink-70:rgba(10,22,38,.70);
+  --ink-55:rgba(10,22,38,.55);
+  --ink-38:rgba(10,22,38,.40);
 
   --ease:cubic-bezier(.16,1,.3,1);
   --gut:clamp(20px,4vw,56px);
@@ -355,14 +369,19 @@ tbody tr:hover{background:var(--sunk)}
 }
 
 /* ---------- launch overlay ---------- */
-.launch{position:fixed;inset:0;z-index:100;background:var(--almond);overflow:hidden;transition:transform 1s var(--ease)}
-.launch[data-up="true"]{transform:translateY(-100%)}
+/* Cross-fades out. It must not slide: a translating layer drags a visible
+   edge up the screen, which read as a white line sweeping bottom to top. */
+.launch{
+  position:fixed;inset:0;z-index:100;background:var(--almond);overflow:hidden;
+  opacity:1;transition:opacity .75s ease;
+}
+.launch[data-up="true"]{opacity:0}
 /* The lines fade themselves in on the canvas, so only the settle is CSS. */
 .launch canvas{position:absolute;inset:0;width:100%;height:100%;transform:scale(1.04);transition:transform 3s var(--ease)}
 .launch[data-on="true"] canvas{transform:scale(1)}
 .launch__mark{
   position:absolute;left:50%;top:50%;translate:-50% -50%;
-  display:grid;place-items:center;color:var(--brick);
+  display:grid;place-items:center;color:var(--ink);
   opacity:0;transform:scale(.88);
   transition:opacity .8s var(--ease),transform 1.1s var(--ease),color .9s ease;
 }

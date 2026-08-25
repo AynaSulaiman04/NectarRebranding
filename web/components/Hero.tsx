@@ -109,12 +109,13 @@ export default function Hero() {
 
     const apply = () => {
       shiftRef.current = progress;
-      // Type crosses from ink to almond across the middle of the change.
+      // Type crosses navy-900 -> sky-100 across the middle of the change, so
+      // it stays legible against both grounds.
       const t = Math.max(0, Math.min((progress - 0.3) / 0.45, 1));
       const mix = (a: number, b: number) => Math.round(a + (b - a) * t);
       sectionRef.current?.style.setProperty(
         "--hero-fg",
-        `rgb(${mix(42, 251)},${mix(27, 246)},${mix(20, 239)})`,
+        `rgb(${mix(10, 234)},${mix(22, 241)},${mix(38, 248)})`,
       );
       setDark(progress > 0.5);
     };
