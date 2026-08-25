@@ -268,6 +268,70 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 }
 .hero__cta[data-in="true"]{opacity:1;transform:none}
 
+/* ---------- dark statement beat ---------- */
+.dark{
+  position:relative;
+  background:var(--ink);
+  color:var(--almond);
+  min-height:100svh;
+  display:grid;
+  overflow:hidden;
+  isolation:isolate;
+}
+/* eases the return to the almond page below rather than cutting */
+.dark::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:18svh;
+  background:linear-gradient(to bottom,transparent,var(--almond));
+  pointer-events:none;z-index:2;
+}
+.dark__line{
+  position:absolute;left:0;top:50%;translate:0 -50%;
+  height:86%;width:min(38vw,420px);z-index:0;
+  opacity:0;transition:opacity 1.2s var(--ease);
+}
+.dark[data-in="true"] .dark__line{opacity:1}
+.dark__line path{
+  stroke-dasharray:900;stroke-dashoffset:900;
+  transition:stroke-dashoffset 2.4s var(--ease);
+}
+.dark[data-in="true"] .dark__line path{stroke-dashoffset:0}
+
+.dark__inner{
+  position:relative;z-index:1;
+  width:100%;max-width:var(--maxw);margin-inline:auto;
+  padding:clamp(80px,12svh,140px) var(--gut) clamp(40px,7svh,72px);
+  display:grid;grid-template-rows:1fr auto;gap:40px;
+}
+.dark__title{
+  align-self:center;justify-self:center;text-align:center;
+  font-variation-settings:'SOFT' 0,'WONK' 0,'opsz' 144;
+  font-weight:400;
+  font-size:clamp(34px,5.6vw,72px);
+  line-height:1.06;
+  letter-spacing:-.02em;
+}
+.dark__title span{display:block}
+.dark__em{font-style:italic}
+
+.dark__foot{
+  display:grid;grid-template-columns:1fr 1fr minmax(0,1.1fr);
+  gap:clamp(20px,4vw,60px);align-items:end;
+}
+.dark__label{
+  font-size:11px;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--almond);
+}
+.dark__body{
+  font-size:13.6px;line-height:1.62;
+  color:rgba(251,246,239,.72);
+  max-width:38ch;justify-self:end;
+}
+@media (max-width:820px){
+  .dark__foot{grid-template-columns:1fr 1fr;row-gap:28px}
+  .dark__body{grid-column:1 / -1;justify-self:start;max-width:none}
+  .dark__line{width:60vw;opacity:.5}
+}
+
 /* ---------- hairline band (the field, demoted to an accent) ---------- */
 .band{position:relative;height:clamp(88px,9vw,132px);overflow:hidden;border-block:1px solid var(--line)}
 .band canvas{position:absolute;inset:0;width:100%;height:100%}

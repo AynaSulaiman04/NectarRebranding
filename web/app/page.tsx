@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
+import DarkStatement from "@/components/DarkStatement";
 import Reveal from "@/components/Reveal";
 import CtaBand from "@/components/CtaBand";
 import { Arrow } from "@/components/Arrow";
@@ -11,6 +12,9 @@ export default function Home() {
     <>
       {/* the field is now the hero itself — revealed as the launch curtain lifts */}
       <Hero />
+
+      {/* the black beat the hero's ground resolves into */}
+      <DarkStatement />
 
       {/* ---------- proof strip ---------- */}
       <section className="section--tight wrap">
