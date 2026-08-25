@@ -1,4 +1,5 @@
-export function Arrow({ size = 14 }: { size?: number }) {
+/** Diagonal outbound arrow, as used on the pill buttons. */
+export function Arrow({ size = 13 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -8,7 +9,7 @@ export function Arrow({ size = 14 }: { size?: number }) {
       aria-hidden="true"
     >
       <path
-        d="M3 8h10M9 4l4 4-4 4"
+        d="M4.5 11.5L11.5 4.5M6 4.5h5.5V10"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"

@@ -108,36 +108,44 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 }
 .textlink:hover{border-bottom-color:var(--brick)}
 
-/* ---------- nav (floating pills) ---------- */
+/* ---------- nav (floating pills) ----------
+   Measured off the reference: 34px pills, 24px from the top and the edges,
+   links pill optically centred in the viewport rather than in a container. */
 .nav{position:fixed;top:0;left:0;right:0;z-index:60}
 .nav__row{
+  position:relative;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
-  height:var(--nav-h);max-width:var(--maxw);margin-inline:auto;
-  padding-inline:var(--gut);
+  height:var(--nav-h);
+  padding:24px clamp(16px,2.2vw,28px) 0;
 }
 .pill{
   display:inline-flex;align-items:center;
   background:var(--white);
-  border:1px solid var(--line);
   border-radius:999px;
-  box-shadow:0 6px 20px -14px rgba(42,27,20,.5);
+  box-shadow:0 4px 16px -12px rgba(42,27,20,.45);
 }
-.brandPill{gap:8px;height:42px;padding-inline:16px}
-.brandPill .brand__name{font-size:17px}
+.brandPill{gap:7px;height:34px;padding-inline:14px}
+.brandPill .brand__name{font-size:15.5px;letter-spacing:-.005em}
 
-.nav__links{padding:4px;gap:2px}
+.nav__links{
+  position:absolute;left:50%;top:24px;translate:-50% 0;
+  height:34px;padding-inline:6px;gap:0;
+}
 .nav__links a{
   display:inline-flex;align-items:center;
-  height:34px;padding-inline:15px;border-radius:999px;
-  font-size:14px;color:var(--ink-70);white-space:nowrap;
-  transition:background .25s ease,color .25s ease;
+  height:34px;padding-inline:13px;
+  font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap;
+  opacity:.88;transition:opacity .25s ease,color .25s ease;
 }
-.nav__links a:hover{background:var(--sunk);color:var(--ink)}
-.nav__links a[data-active="true"]{background:var(--sunk);color:var(--brick)}
+.nav__links a:hover{opacity:1;color:var(--brick)}
+.nav__links a[data-active="true"]{opacity:1;color:var(--brick)}
 
 .btn--dark{background:var(--ink);border-color:var(--ink);color:#fff}
 .btn--dark:hover{background:var(--brick);border-color:var(--brick)}
-.btn--pill{border-radius:999px;height:42px}
+.btn--pill{
+  border-radius:999px;height:34px;
+  padding-inline:16px;font-size:13.5px;gap:7px;
+}
 
 .brand{display:inline-flex;align-items:baseline;gap:8px}
 .brand__name{
@@ -168,7 +176,7 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
 .hero__inner{
   width:100%;max-width:1000px;
-  padding:calc(var(--nav-h) + 24px) var(--gut) clamp(42px,7.5vh,92px);
+  padding:calc(var(--nav-h) + 24px) clamp(16px,2.2vw,28px) clamp(26px,5.4vh,58px);
   text-align:center;
 }
 .hero__title{
@@ -176,11 +184,11 @@ h3{font-size:clamp(18px,1.5vw,23px)}
      what reads as a display serif at this size. WONK stays at 0 (brief R11). */
   font-variation-settings:'SOFT' 0,'WONK' 0,'opsz' 144;
   font-weight:400;
-  font-size:clamp(40px,8.2vw,104px);
-  line-height:.96;
-  letter-spacing:-.028em;
+  font-size:clamp(38px,7.9vw,98px);
+  line-height:.88;
+  letter-spacing:-.021em;
   color:var(--ink);
-  min-height:1.95em;
+  min-height:1.76em;
 }
 .hero__title span{font-variation-settings:'SOFT' 0,'WONK' 0,'opsz' 144}
 .caret{
@@ -192,18 +200,18 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 @keyframes blink{50%{opacity:0}}
 
 .hero__caption{
-  max-width:44ch;margin:clamp(16px,2vw,26px) auto 0;
-  font-size:clamp(13px,.92vw,14.5px);
-  line-height:1.52;
+  max-width:330px;margin:clamp(16px,1.9vw,23px) auto 0;
+  font-size:12.8px;
+  line-height:1.36;
   color:var(--ink);
-  text-wrap:pretty;
+  text-wrap:balance;
   opacity:0;transform:translateY(8px);
   transition:opacity .8s var(--ease),transform .8s var(--ease);
 }
-.hero__caption[data-in="true"]{opacity:.82;transform:none}
+.hero__caption[data-in="true"]{opacity:.8;transform:none}
 
 .hero__cta{
-  margin-top:clamp(20px,2.6vw,32px);
+  margin-top:clamp(18px,1.9vw,23px);
   opacity:0;transform:translateY(8px);
   transition:opacity .8s var(--ease) .12s,transform .8s var(--ease) .12s;
 }

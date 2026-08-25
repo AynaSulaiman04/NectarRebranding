@@ -17,8 +17,9 @@ const HEADLINE: { text: string; italic?: boolean }[] = [
 
 const FULL = HEADLINE.map((s) => s.text).join("");
 
+/* Kept to three lines at the caption's measure, as the reference sets it. */
 const CAPTION =
-  "From ACNC lodgements and governance to tendering, systems and corporate restructuring, we help Australian organisations move forward with clarity, structure and a measured result.";
+  "From lodgements and governance to tendering, systems and restructuring, we help Australian organisations move forward with clarity and structure.";
 
 export default function Hero() {
   const ref = useRef<HTMLCanvasElement>(null);
