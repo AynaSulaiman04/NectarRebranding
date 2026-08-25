@@ -4,40 +4,38 @@
    Nothing outside this block may introduce a new colour.
    ============================================================ */
 :root{
-  /* ---- blue scheme ----
-     Replaces the brief's Section 05 tokens at the client's direction.
-     Section 05 is recorded in the brief and in git history if it is
-     reinstated. Names are kept so nothing downstream has to change. */
+  /* ---- Section 05, verbatim. The site palette. ---- */
 
-  /* the blue ramp */
+  /* surface and text */
+  --almond:#FBF6EF;
+  --white:#FFFFFF;
+  --ink:#2A1B14;
+  --line:#E6DCCF;
+  --sunk:#F5EEE4;
+
+  /* brand and accents */
+  --brick:#B33A1E;
+  --moss:#3F5B45;
+  --amber:#E8A33D;
+  --amber-ink:#8A5C10;
+  --plum:#5B2E44;
+  --clay:#D9714D;
+  --error:#A8321A;
+
+  /* ---- hero transition only ----
+     The blue the hero travels to on scroll. Not part of Section 05 —
+     an addition for the motion, pending client sign-off. Used nowhere
+     but the hero canvas. */
   --sky-100:#EAF1F8;
-  --sky-200:#D3E1F0;
   --sky-300:#C3D6EC;
   --sky-600:#5B84B4;
-  --navy-600:#2D5485;
   --navy-700:#1B3556;
   --navy-900:#0A1626;
 
-  /* surface and text */
-  --almond:var(--sky-100);   /* page */
-  --white:#FFFFFF;
-  --ink:var(--navy-900);     /* all body text — 15.9:1 on sky-100 */
-  --line:var(--sky-200);
-  --sunk:#F2F7FC;
-
-  /* accents */
-  --brick:var(--navy-600);   /* primary: buttons, links, mark */
-  --moss:#2F5D5B;            /* success */
-  --amber:#E8A33D;           /* warning */
-  --amber-ink:#7A5210;
-  --plum:var(--navy-700);
-  --clay:var(--sky-600);
-  --error:#A8321A;
-
   /* derived — opacity only, no new hues */
-  --ink-70:rgba(10,22,38,.70);
-  --ink-55:rgba(10,22,38,.55);
-  --ink-38:rgba(10,22,38,.40);
+  --ink-70:rgba(42,27,20,.70);
+  --ink-55:rgba(42,27,20,.55);
+  --ink-38:rgba(42,27,20,.38);
 
   --ease:cubic-bezier(.16,1,.3,1);
   --gut:clamp(20px,4vw,56px);
