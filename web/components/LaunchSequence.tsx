@@ -11,13 +11,11 @@ const BLOOM = 1500; // warm field washes in underneath
 const LIFT = 2980;
 const DONE = 3400;
 
-const SEEN_KEY = "nectar.launch.seen";
-
 /**
  * Opens on almond with brick lines fully pinched, holds, then relaxes into the
- * straight hairline field as the warm ground blooms in underneath. Runs once
- * per browser session — an enterprise site should not replay an intro on every
- * navigation.
+ * straight hairline field as the warm ground blooms in underneath. Runs on
+ * every page load; it lives in the root layout, so client-side navigation
+ * between pages does not remount and replay it.
  */
 export default function LaunchSequence() {
   const [mounted, setMounted] = useState(false);
@@ -28,19 +26,11 @@ export default function LaunchSequence() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   // Decide on the client only, so the server never renders the overlay.
+  // Runs on every page load; client-side navigation does not remount it.
   useEffect(() => {
-    let seen = true;
-    try {
-      seen = sessionStorage.getItem(SEEN_KEY) === "1";
-    } catch {
-      seen = false;
-    }
-    if (seen || prefersReducedMotion()) return;
-    try {
-      sessionStorage.setItem(SEEN_KEY, "1");
-      sessionStorage.setItem("nectar.launch.running", "1");
-    } catch {
-      /* private mode — run it anyway */
+    if (prefersReducedMotion()) {
+      window.dispatchEvent(new Event(LAUNCH_DONE_EVENT));
+      return;
     }
     setGone(false);
     setMounted(true);
@@ -81,11 +71,6 @@ export default function LaunchSequence() {
       setTimeout(() => {
         document.body.style.overflow = "";
         setGone(true);
-        try {
-          sessionStorage.removeItem("nectar.launch.running");
-        } catch {
-          /* ignore */
-        }
         window.dispatchEvent(new Event(LAUNCH_DONE_EVENT));
       }, DONE),
     ];

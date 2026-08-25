@@ -38,17 +38,8 @@ export function useLaunchGate() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // If the launch overlay is not going to run, start immediately.
-    let launching = false;
-    try {
-      launching =
-        sessionStorage.getItem("nectar.launch.running") === "1" &&
-        !prefersReducedMotion();
-    } catch {
-      launching = false;
-    }
-
-    if (!launching) {
+    // The launch runs on every page load, so the hero always waits for it.
+    if (prefersReducedMotion()) {
       setReady(true);
       return;
     }
