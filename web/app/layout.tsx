@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Figtree } from "next/font/google";
+import { Playfair_Display, Figtree } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import LaunchSequence from "@/components/LaunchSequence";
@@ -7,18 +7,20 @@ import { site } from "@/content/site";
 import "./globals.css";
 
 /**
- * Display face. A Didone, to match the reference the client supplied — high
- * stroke contrast, fine hairlines, a true italic for the accent lines.
+ * Display face, matched to the reference Ayna supplied: high stroke contrast,
+ * narrow-ish proportions, a calligraphic italic for the accent words.
+ *
+ * One family carries both settings — bold on the hero, regular on the dark
+ * statement beat — so the site stays on two families total.
  *
  * NOTE: this supersedes brief R11, which specified Fraunces with WONK at 0.
- * Changed on the client's instruction; the brief has not been reissued.
+ * Changed on instruction; the brief has not been reissued.
  *
- * Variable font, so weight is omitted (see next/font docs); opsz carries the
- * contrast and is pinned to 96, its maximum, on display sizes.
+ * Variable font, so weight is omitted (see next/font docs). No opsz axis on
+ * this family — contrast comes from the design, not an axis.
  */
-const display = Bodoni_Moda({
+const display = Playfair_Display({
   subsets: ["latin"],
-  axes: ["opsz"],
   style: ["normal", "italic"],
   display: "swap",
   variable: "--font-display",
