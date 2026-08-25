@@ -26,7 +26,7 @@ export default function DarkStatement() {
     const set = (k: string, v: number) => el.style.setProperty(k, String(v));
 
     if (prefersReducedMotion()) {
-      ["--split", "--p2", "--card", "--draw", "--draw2"].forEach((k) => set(k, 1));
+      ["--split", "--p2", "--card", "--draw"].forEach((k) => set(k, 1));
       return;
     }
 
@@ -37,11 +37,11 @@ export default function DarkStatement() {
       const total = Math.max(1, rect.height - window.innerHeight);
       const p = Math.max(0, Math.min(-rect.top / total, 1));
 
-      set("--draw", range(p, 0.0, 0.3));
+      // one continuous draw across the whole beat, rather than two bursts
+      set("--draw", range(p, 0.02, 0.92));
       set("--split", range(p, 0.12, 0.42));
       set("--p2", range(p, 0.34, 0.58));
       set("--card", range(p, 0.5, 0.72));
-      set("--draw2", range(p, 0.45, 0.95));
     };
 
     const onScroll = () => {
@@ -68,7 +68,9 @@ export default function DarkStatement() {
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          {/* the line begins as a ring at its own head, then runs forward */}
+          {/* The line begins as a ring at its head, then runs on as ONE
+              continuous stroke — head, sweep, hook and loop in a single path,
+              so it draws like a pencil rather than as separate fragments. */}
           <circle
             className="dark__dot"
             cx="181"
@@ -79,30 +81,13 @@ export default function DarkStatement() {
             strokeWidth="1.5"
           />
           <path
-            className="dark__stroke dark__stroke--run"
+            className="dark__stroke"
             pathLength={100}
-            d="M181 182C120 296 230 396 330 486c42 40 58 76 70 80c40 12 105-34 160-58"
+            d="M181 182C120 296 230 396 330 486c42 40 58 76 70 80c40 12 105-34 160-58c56-24 118-30 150 2c28 28 6 74-46 84c-64 12-150-22-214-74"
             stroke="var(--azure-500)"
             strokeWidth="1.5"
             strokeLinecap="round"
-          />
-          <path
-            className="dark__stroke dark__stroke--tick"
-            pathLength={100}
-            d="M188 189c7 15 14 26 19 34"
-            stroke="var(--azure-500)"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
-          {/* extends later in the sequence, looping below the statement.
-              Kept clear of the right-hand copy column so it never crosses text. */}
-          <path
-            className="dark__stroke dark__stroke--ext"
-            pathLength={100}
-            d="M561 508c56-24 118-30 150 2c28 28 6 74-46 84c-64 12-150-22-214-74"
-            stroke="var(--azure-500)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
 

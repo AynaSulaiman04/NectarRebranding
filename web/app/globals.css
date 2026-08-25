@@ -211,6 +211,9 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   /* the 1.44 / .055 pair means the last column still reaches full height
      exactly as --fill hits 1 */
   transform:scaleY(clamp(0,calc(var(--fill) * 1.44 - var(--i) * .055),1));
+  /* takes the edge off any remaining step between scroll samples */
+  transition:transform .14s linear;
+  will-change:transform;
   /* hairline of light on the leading (top) edge, so the steps read as edges
      rather than as one flat mass */
   box-shadow:0 -1px 0 rgba(251,246,239,.07);
@@ -397,7 +400,7 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   color:var(--almond);
   height:230svh;
   isolation:isolate;
-  --split:0; --p2:0; --card:0; --draw:0; --draw2:0;
+  --split:0; --p2:0; --card:0; --draw:0;
 }
 .dark__sticky{
   position:sticky;top:0;height:100svh;overflow:hidden;
@@ -417,11 +420,9 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   stroke-dasharray:100;
   stroke-dashoffset:calc(100 - clamp(0,calc(var(--draw) * 4),1) * 100);
 }
-.dark__stroke--run{
-  stroke-dashoffset:calc(100 - clamp(0,calc((var(--draw) - .22) / .78),1) * 100);
-}
-.dark__stroke--ext{
-  stroke-dashoffset:calc(100 - var(--draw2) * 100);
+/* The stroke runs on once the ring has closed, so the two read as one line. */
+.dark__stroke{
+  stroke-dashoffset:calc(100 - clamp(0,calc((var(--draw) - .18) / .82),1) * 100);
 }
 
 .dark__inner{

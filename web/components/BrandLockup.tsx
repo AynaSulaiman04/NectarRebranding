@@ -19,27 +19,38 @@ function Mark({ size = 26, tone = "gradient" }: { size?: number; tone?: Tone }) 
         ? "var(--almond)"
         : "var(--ink)";
 
+  const right =
+    tone === "gradient" ? "url(#nectarMarkB)" : fill;
+
   return (
     <svg
-      width={size}
-      height={size * 1.16}
-      viewBox="0 0 48 56"
+      width={size * 1.15}
+      height={size}
+      viewBox="0 0 64 56"
       fill="none"
       aria-hidden="true"
       className="brandMark"
     >
       {tone === "gradient" && (
         <defs>
-          <linearGradient id="nectarMark" x1="14" y1="2" x2="30" y2="54" gradientUnits="userSpaceOnUse">
-            <stop stopColor="var(--amber)" />
-            <stop offset=".45" stopColor="var(--brick)" />
-            <stop offset="1" stopColor="var(--ink)" />
+          <linearGradient id="nectarMark" x1="6" y1="52" x2="30" y2="6" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--error)" />
+            <stop offset="1" stopColor="var(--brick)" />
+          </linearGradient>
+          <linearGradient id="nectarMarkB" x1="58" y1="52" x2="34" y2="6" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--brick)" />
+            <stop offset="1" stopColor="var(--amber)" />
           </linearGradient>
         </defs>
       )}
+      {/* two leaning strokes meeting at the foot */}
       <path
-        d="M30.4 2c-1.7 0-2.8 1-3.6 2.7C21 15.4 12 30.6 7 39.6 3 46.8 1 51.6 1 54.4h9.2c0-2 1.4-5.7 4.1-10.6C18.6 36 25.4 23 29.3 15c.4-.8.8-1.2 1.2-1.2s.8.4 1 1.2l5.9 30.2c.3 1.6.4 2.7.4 3.5 0 2.7-1.6 3.7-4.7 3.7-2 0-3.7-.4-5.1-1.2l-2 6.5c2.4 1 5.1 1.6 8.1 1.6 7.1 0 11.6-3.7 11.6-10.2 0-1.6-.2-3.4-.6-5.5L36.9 5.7C36.3 3 34.3 2 31.9 2z"
+        d="M30.6 53.2h-8.1l-.7-6.1c-2.4 4.4-6.1 6.8-10.6 6.8C5.4 53.9 1 49.6 1 42.6 1 32.4 9.2 24.6 22.4 24.6h.9l-.3-2.4C22.4 15.9 26 8 30 2.6z"
         fill={fill}
+      />
+      <path
+        d="M33.4 2.8h8.1l.7 6.1c2.4-4.4 6.1-6.8 10.6-6.8C58.6 2.1 63 6.4 63 13.4c0 10.2-8.2 18-21.4 18h-.9l.3 2.4c.6 6.3-3 14.2-7 19.6z"
+        fill={right}
       />
     </svg>
   );

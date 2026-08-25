@@ -91,7 +91,9 @@ export default function Hero() {
 
   /* ---------- once released, the pinned ground goes to black ---------- */
   useEffect(() => {
-    const onScroll = () => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
       const vh = window.innerHeight;
       const start = vh * 0.55; // content has begun clearing the frame
       const end = vh * 1.4; // fully black before the section releases
@@ -102,10 +104,16 @@ export default function Hero() {
         String(t * t * (3 - 2 * t)), // smoothstep
       );
     };
-    onScroll();
+    // Coalesce to one write per frame — scroll fires far more often than that,
+    // and the unthrottled version made the staircase judder.
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
+      if (raf) cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
