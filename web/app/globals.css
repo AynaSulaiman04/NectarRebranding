@@ -140,6 +140,21 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 .nav__links a:hover{opacity:1;color:var(--brick)}
 .nav__links a[data-active="true"]{opacity:1;color:var(--brick)}
 
+/* Pills settle down into place; labels follow just behind them. */
+.nav [data-pop]{
+  opacity:0;
+  transform:translateY(-14px) scale(.96);
+  transition:opacity .7s var(--ease),transform .9s var(--ease);
+}
+.nav[data-ready="true"] [data-pop]{opacity:1;transform:none}
+
+.nav [data-popitem]{
+  opacity:0;
+  transform:translateY(-5px);
+  transition:opacity .5s var(--ease),transform .6s var(--ease);
+}
+.nav[data-ready="true"] [data-popitem]{opacity:1;transform:none}
+
 .btn--dark{background:var(--ink);border-color:var(--ink);color:#fff}
 .btn--dark:hover{background:var(--brick);border-color:var(--brick)}
 .btn--pill{
@@ -185,10 +200,12 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   font-variation-settings:'SOFT' 0,'WONK' 0,'opsz' 144;
   font-weight:400;
   font-size:clamp(38px,7.9vw,98px);
-  line-height:.88;
+  /* Fraunces carries long descenders — below ~0.98 the "g" of line one
+     collides with the ascenders of line two. */
+  line-height:.99;
   letter-spacing:-.021em;
   color:var(--ink);
-  min-height:1.76em;
+  min-height:1.98em;
 }
 .hero__title span{font-variation-settings:'SOFT' 0,'WONK' 0,'opsz' 144}
 .caret{
@@ -200,7 +217,7 @@ h3{font-size:clamp(18px,1.5vw,23px)}
 @keyframes blink{50%{opacity:0}}
 
 .hero__caption{
-  max-width:330px;margin:clamp(16px,1.9vw,23px) auto 0;
+  max-width:330px;margin:clamp(22px,2.6vw,32px) auto 0;
   font-size:12.8px;
   line-height:1.36;
   color:var(--ink);
@@ -326,8 +343,9 @@ tbody tr:hover{background:var(--sunk)}
 /* ---------- launch overlay ---------- */
 .launch{position:fixed;inset:0;z-index:100;background:var(--almond);overflow:hidden;transition:transform 1s var(--ease)}
 .launch[data-up="true"]{transform:translateY(-100%)}
-.launch canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transform:scale(1.06);transition:opacity .6s ease,transform 2.6s var(--ease)}
-.launch[data-on="true"] canvas{opacity:1;transform:scale(1)}
+/* The lines fade themselves in on the canvas, so only the settle is CSS. */
+.launch canvas{position:absolute;inset:0;width:100%;height:100%;transform:scale(1.04);transition:transform 3s var(--ease)}
+.launch[data-on="true"] canvas{transform:scale(1)}
 .launch__mark{
   position:absolute;left:50%;top:50%;translate:-50% -50%;
   display:flex;align-items:center;gap:13px;color:var(--almond);

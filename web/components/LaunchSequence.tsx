@@ -5,11 +5,13 @@ import { makeField, prefersReducedMotion } from "@/lib/field";
 import { LAUNCH_DONE_EVENT } from "@/lib/useTypewriter";
 
 const M0 = 0.015; // fully pinched
-const HOLD = 560; // hold the bowtie so it registers
-const RELAX = 2300; // pinch relaxes into straight lines
-const BLOOM = 1500; // warm field washes in underneath
-const LIFT = 2980;
-const DONE = 3400;
+const FADE = 900; // lines fade in from the centre outward
+const HOLD = 1150; // the pinched form sits before it moves
+const RELAX = 2000; // pinch relaxes into straight lines
+const BLOOM_IN = 650; // warm ground starts washing in under the lines
+const BLOOM = 1700;
+const LIFT = 3300;
+const DONE = 3750;
 
 /**
  * Opens on almond with brick lines fully pinched, holds, then relaxes into the
@@ -44,7 +46,7 @@ export default function LaunchSequence() {
     document.body.style.overflow = "hidden";
     const field = makeField(cv);
     field.size();
-    field.paint(M0, 0);
+    field.paint(M0, 0, 0); // nothing drawn yet — the lines fade in
 
     const raf0 = requestAnimationFrame(() => setOn(true));
 
@@ -53,20 +55,29 @@ export default function LaunchSequence() {
     const step = (t: number) => {
       if (t0 === null) t0 = t;
       const el = t - t0;
+
+      // 1. lines fade in from the centre outward, still fully pinched
+      const f = Math.min(el / FADE, 1);
+      const reveal = 1 - Math.pow(1 - f, 3); // ease-out cubic
+
+      // 2. after the hold, the pinch relaxes into straight lines
       let m = M0;
       if (el > HOLD) {
         const p = Math.min((el - HOLD) / RELAX, 1);
         m = M0 + (1 - M0) * (1 - Math.pow(1 - p, 5)); // ease-out quint
       }
-      const q = Math.min(el / BLOOM, 1);
-      field.paint(m, q * q * (3 - 2 * q)); // smoothstep bloom
+
+      // 3. the warm ground washes in underneath, overlapping both
+      const b = Math.max(0, Math.min((el - BLOOM_IN) / BLOOM, 1));
+
+      field.paint(m, b * b * (3 - 2 * b), reveal); // smoothstep bloom
       if (el < HOLD + RELAX) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
 
     const timers = [
-      setTimeout(() => setMark(true), 640),
-      setTimeout(() => setMark(false), 2500),
+      setTimeout(() => setMark(true), HOLD),
+      setTimeout(() => setMark(false), 2950),
       setTimeout(() => setUp(true), LIFT),
       setTimeout(() => {
         document.body.style.overflow = "";

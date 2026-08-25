@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTypewriter, useLaunchGate } from "@/lib/useTypewriter";
+import { useLaunchGate } from "@/lib/useTypewriter";
 import { Arrow } from "./Arrow";
 
 const links = [
@@ -13,41 +13,25 @@ const links = [
   { href: "/firm", label: "Firm" },
 ];
 
-/** One nav label, typed in on its own stagger. */
-function NavLink({
-  href,
-  label,
-  active,
-  start,
-  delay,
-}: {
-  href: string;
-  label: string;
-  active: boolean;
-  start: boolean;
-  delay: number;
-}) {
-  const { typed } = useTypewriter(label, start, 22, delay);
-  return (
-    <Link href={href} data-active={active} aria-label={label}>
-      <span aria-hidden="true">{typed || " "}</span>
-    </Link>
-  );
-}
-
 export default function Nav() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const ready = useLaunchGate();
-  // Only type on the home page; elsewhere the nav is simply present.
-  const animate = isHome;
-  const start = animate ? ready : true;
+  // On the home page the pills settle in once the launch has finished.
+  // Elsewhere they are simply present.
+  const shown = isHome ? ready : true;
 
   return (
     <>
-      <header className="nav" data-home={isHome}>
+      <header className="nav" data-home={isHome} data-ready={shown}>
         <div className="nav__row">
-          <Link href="/" className="pill brandPill" aria-label="Nectar Consultancy, home">
+          <Link
+            href="/"
+            className="pill brandPill"
+            data-pop
+            style={{ transitionDelay: "60ms" }}
+            aria-label="Nectar Consultancy, home"
+          >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 d="M12 3.6l7.3 4.2v8.4L12 20.4l-7.3-4.2V7.8L12 3.6z"
@@ -59,20 +43,31 @@ export default function Nav() {
             <span className="brand__name">Nectar</span>
           </Link>
 
-          <nav className="pill nav__links" aria-label="Primary">
+          <nav
+            className="pill nav__links"
+            data-pop
+            style={{ transitionDelay: "0ms" }}
+            aria-label="Primary"
+          >
             {links.map((l, i) => (
-              <NavLink
+              <Link
                 key={l.href}
                 href={l.href}
-                label={l.label}
-                active={pathname.startsWith(l.href)}
-                start={start}
-                delay={animate ? 120 + i * 170 : 0}
-              />
+                data-active={pathname.startsWith(l.href)}
+                data-popitem
+                style={{ transitionDelay: `${260 + i * 55}ms` }}
+              >
+                {l.label}
+              </Link>
             ))}
           </nav>
 
-          <Link className="btn btn--dark btn--pill" href="/contact">
+          <Link
+            className="btn btn--dark btn--pill"
+            href="/contact"
+            data-pop
+            style={{ transitionDelay: "120ms" }}
+          >
             Talk to us <Arrow />
           </Link>
         </div>
