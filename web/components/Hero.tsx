@@ -36,14 +36,31 @@ export default function Hero() {
     let raf = 0;
     let running = false;
 
+    // Warm ground cools toward plum as the hero scrolls away. Completed over
+    // roughly half a viewport, so the change is fully visible before the hero
+    // leaves the screen.
+    let shift = 0;
+    const readScroll = () => {
+      const span = window.innerHeight * 0.55;
+      shift = Math.max(0, Math.min(window.scrollY / span, 1));
+    };
+    readScroll();
+
     field.size();
-    field.paint(1, 1);
+    field.paint(1, 1, 1, shift);
 
     const tick = (t: number) => {
       if (!running) return;
-      field.paint(0.99 + 0.01 * Math.cos(t / 11000), 1);
+      field.paint(0.99 + 0.01 * Math.cos(t / 11000), 1, 1, shift);
       raf = requestAnimationFrame(tick);
     };
+
+    const onScroll = () => {
+      readScroll();
+      // Repaint directly when the breathing loop is not running.
+      if (!running) field.paint(1, 1, 1, shift);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     const io = reduced
       ? null
@@ -68,7 +85,8 @@ export default function Hero() {
       clearTimeout(timer);
       timer = setTimeout(() => {
         field.size();
-        field.paint(1, 1);
+        readScroll();
+        field.paint(1, 1, 1, shift);
       }, 150);
     };
     window.addEventListener("resize", onResize);
@@ -77,6 +95,7 @@ export default function Hero() {
       running = false;
       cancelAnimationFrame(raf);
       io?.disconnect();
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       clearTimeout(timer);
     };
