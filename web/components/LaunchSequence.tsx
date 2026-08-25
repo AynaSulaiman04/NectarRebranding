@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { makeField, prefersReducedMotion } from "@/lib/field";
 import { LAUNCH_DONE_EVENT } from "@/lib/useTypewriter";
+import { Mark } from "./BrandLockup";
 
 const LOGO_IN = 60; // mark appears on the almond ground
 const DROP_AT = 700; // lines start falling from the top edge
@@ -94,14 +95,7 @@ export default function LaunchSequence() {
     <div className="launch" aria-hidden="true" data-on={on} data-mark={mark} data-up={up}>
       <canvas ref={ref} />
       <div className="launch__mark">
-        <svg width="44" height="44" viewBox="0 0 34 34" fill="none">
-          <path
-            d="M17 6.4l9.2 5.3v10.6L17 27.6l-9.2-5.3V11.7L17 6.4z"
-            stroke="currentColor"
-            strokeWidth="1.3"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <Mark size={46} tone="gradient" />
       </div>
     </div>
   );

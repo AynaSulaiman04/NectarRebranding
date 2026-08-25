@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import ScopeBridge from "@/components/ScopeBridge";
+import StackingCards from "@/components/StackingCards";
 import DarkStatement from "@/components/DarkStatement";
 import Reveal from "@/components/Reveal";
 import CtaBand from "@/components/CtaBand";
@@ -19,6 +20,9 @@ export default function Home() {
 
       {/* carries the ground out of black and lands the scope test */}
       <ScopeBridge />
+
+      {/* the four stages, dealt onto a pile as you scroll */}
+      <StackingCards />
 
       {/* ---------- proof strip ---------- */}
       <section className="section--tight wrap">

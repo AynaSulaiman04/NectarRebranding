@@ -68,8 +68,18 @@ export default function DarkStatement() {
           preserveAspectRatio="none"
           aria-hidden="true"
         >
+          {/* the line begins as a ring at its own head, then runs forward */}
+          <circle
+            className="dark__dot"
+            cx="181"
+            cy="182"
+            r="7"
+            pathLength={100}
+            stroke="var(--azure-500)"
+            strokeWidth="1.5"
+          />
           <path
-            className="dark__stroke"
+            className="dark__stroke dark__stroke--run"
             pathLength={100}
             d="M181 182C120 296 230 396 330 486c42 40 58 76 70 80c40 12 105-34 160-58"
             stroke="var(--azure-500)"
