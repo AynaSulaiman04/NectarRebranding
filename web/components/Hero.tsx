@@ -27,6 +27,7 @@ const LOCK = 900;
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const blackRef = useRef<HTMLDivElement>(null);
   const shiftRef = useRef(0);
   const ready = useLaunchGate();
   const { n } = useTypewriter(FULL, ready, 30, 420);
@@ -85,6 +86,27 @@ export default function Hero() {
       io?.disconnect();
       window.removeEventListener("resize", onResize);
       clearTimeout(timer);
+    };
+  }, []);
+
+  /* ---------- once released, the pinned ground goes to black ---------- */
+  useEffect(() => {
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      const start = vh * 0.55; // content has begun clearing the frame
+      const end = vh * 1.4; // fully black before the section releases
+      const t = Math.max(0, Math.min((window.scrollY - start) / (end - start), 1));
+      blackRef.current?.style.setProperty(
+        "opacity",
+        String(t * t * (3 - 2 * t)), // smoothstep
+      );
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 
@@ -181,7 +203,10 @@ export default function Hero() {
 
   return (
     <section className="hero" ref={sectionRef} data-dark="false">
-      <canvas ref={canvasRef} aria-hidden="true" />
+      <div className="hero__bg" aria-hidden="true">
+        <canvas ref={canvasRef} />
+        <div className="hero__black" ref={blackRef} />
+      </div>
 
       <div className="hero__inner">
         <h1 className="hero__title display" aria-label={FULL.replace("\n", " ")}>
