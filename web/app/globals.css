@@ -213,9 +213,6 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   /* takes the edge off any remaining step between scroll samples */
   transition:transform .14s linear;
   will-change:transform;
-  /* hairline of light on the leading (top) edge, so the steps read as edges
-     rather than as one flat mass */
-  box-shadow:0 -1px 0 rgba(251,246,239,.07);
 }
 .hero__inner{
   position:absolute;top:0;left:0;right:0;height:100svh;z-index:1;
