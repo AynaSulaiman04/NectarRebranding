@@ -197,9 +197,23 @@ h3{font-size:clamp(18px,1.5vw,23px)}
   position:sticky;top:0;height:100svh;overflow:hidden;z-index:0;
 }
 .hero__bg canvas{position:absolute;inset:0;width:100%;height:100%}
+/* Staircase close. Nine columns fall from the top edge, each starting a beat
+   after the one before it, so the leading edge steps down across the frame
+   before it all lands flat black. --fill is driven by scroll. */
 .hero__black{
-  position:absolute;inset:0;background:var(--black);
-  opacity:0;pointer-events:none;
+  position:absolute;inset:0;display:flex;pointer-events:none;
+  --fill:0;
+}
+.hero__black i{
+  flex:1 1 0;
+  background:var(--black);
+  transform-origin:top center;
+  /* the 1.44 / .055 pair means the last column still reaches full height
+     exactly as --fill hits 1 */
+  transform:scaleY(clamp(0,calc(var(--fill) * 1.44 - var(--i) * .055),1));
+  /* hairline of light on the leading edge, so the steps read as edges
+     rather than as one flat mass */
+  box-shadow:0 1px 0 rgba(251,246,239,.07);
 }
 .hero__inner{
   position:absolute;top:0;left:0;right:0;height:100svh;z-index:1;

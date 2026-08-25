@@ -96,8 +96,9 @@ export default function Hero() {
       const start = vh * 0.55; // content has begun clearing the frame
       const end = vh * 1.4; // fully black before the section releases
       const t = Math.max(0, Math.min((window.scrollY - start) / (end - start), 1));
+      // Drives the staircase: each column reads --fill against its own index.
       blackRef.current?.style.setProperty(
-        "opacity",
+        "--fill",
         String(t * t * (3 - 2 * t)), // smoothstep
       );
     };
@@ -208,7 +209,13 @@ export default function Hero() {
     <section className="hero" ref={sectionRef} data-dark="false">
       <div className="hero__bg" aria-hidden="true">
         <canvas ref={canvasRef} />
-        <div className="hero__black" ref={blackRef} />
+        {/* nine columns closing top-down on a stagger — a staircase edge
+            that steps across the frame and lands flat black */}
+        <div className="hero__black" ref={blackRef}>
+          {Array.from({ length: 9 }, (_, i) => (
+            <i key={i} style={{ ["--i" as string]: i }} />
+          ))}
+        </div>
       </div>
 
       <div className="hero__inner">
