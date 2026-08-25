@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Figtree } from "next/font/google";
+import { Bodoni_Moda, Figtree } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import LaunchSequence from "@/components/LaunchSequence";
@@ -7,13 +7,18 @@ import { site } from "@/content/site";
 import "./globals.css";
 
 /**
- * Display face. WONK is held at 0 so Fraunces reads sharp rather than quirky
- * (brief R11); SOFT is held at 0 for the same reason.
+ * Display face. A Didone, to match the reference the client supplied — high
+ * stroke contrast, fine hairlines, a true italic for the accent lines.
+ *
+ * NOTE: this supersedes brief R11, which specified Fraunces with WONK at 0.
+ * Changed on the client's instruction; the brief has not been reissued.
+ *
+ * Variable font, so weight is omitted (see next/font docs); opsz carries the
+ * contrast and is pinned to 96, its maximum, on display sizes.
  */
-const fraunces = Fraunces({
+const display = Bodoni_Moda({
   subsets: ["latin"],
-  axes: ["SOFT", "WONK", "opsz"],
-  weight: "variable",
+  axes: ["opsz"],
   style: ["normal", "italic"],
   display: "swap",
   variable: "--font-display",
@@ -46,7 +51,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-AU" className={`${fraunces.variable} ${figtree.variable}`}>
+    <html lang="en-AU" className={`${display.variable} ${figtree.variable}`}>
       <body>
         <LaunchSequence />
         <Nav />

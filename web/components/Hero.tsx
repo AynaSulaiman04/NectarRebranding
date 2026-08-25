@@ -120,8 +120,11 @@ export default function Hero() {
     };
 
     if (prefersReducedMotion()) {
-      shiftRef.current = 1;
-      setDark(true);
+      // Hold the opening state: warm ground, ink type, dark buttons. Jumping
+      // to the end of the journey left the ground warm but the controls
+      // inverted, because nothing repaints the field without the raf loop.
+      shiftRef.current = 0;
+      setDark(false);
       return;
     }
 
@@ -234,7 +237,7 @@ export default function Hero() {
         </p>
 
         <div className="hero__cta" data-in={done}>
-          <Link className="btn btn--dark" href="/contact">
+          <Link className="btn btn--dark btn--pill" href="/contact">
             Talk to us <Arrow />
           </Link>
         </div>
