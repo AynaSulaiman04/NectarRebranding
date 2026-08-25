@@ -31,23 +31,24 @@ export default function DarkStatement() {
     <section className="dark" ref={ref} data-in={inView}>
       <svg
         className="dark__line"
-        viewBox="0 0 420 640"
+        viewBox="0 0 1100 634"
         fill="none"
-        preserveAspectRatio="xMinYMid meet"
+        preserveAspectRatio="none"
         aria-hidden="true"
       >
         <path
-          d="M182 24C96 150 62 300 150 424c62 88 168 108 254 62"
-          stroke="var(--sky-600)"
-          strokeWidth="1.3"
+          className="dark__stroke"
+          d="M181 182C120 296 230 396 330 486c42 40 58 76 70 80c40 12 105-34 160-58"
+          stroke="var(--azure-500)"
+          strokeWidth="1.5"
           strokeLinecap="round"
         />
         <path
-          d="M176 44C150 78 132 108 122 138"
-          stroke="var(--sky-600)"
-          strokeWidth="1.1"
+          className="dark__stroke dark__stroke--tick"
+          d="M188 189c7 15 14 26 19 34"
+          stroke="var(--azure-500)"
+          strokeWidth="1.2"
           strokeLinecap="round"
-          opacity=".55"
         />
       </svg>
 
